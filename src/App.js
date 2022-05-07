@@ -1,26 +1,53 @@
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { Line, Chart } from 'react-chartjs-2';
+import 'chartjs-adapter-luxon';
+import StreamingPlugin from 'chartjs-plugin-streaming';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Hello from V2</h1>
-	<p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+Chart.register(StreamingPlugin);
+
+class App extends Component {
+  render() {
+    return (
+      <Line
+        data={{
+          datasets: [{
+            label: 'DataSet 1',
+	    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+	    borderColor: 'rgb(255, 99, 132)',
+	    borderDash: [8,4],
+	    fill: true,
+            data: []
+          }, {
+            label: 'DataSet 2',
+	    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+	    borderColor: 'rgb(54, 162, 235)',
+	    cubicInterpolationMode: 'monotone',
+	    fill: true,
+            data: []
+          }]
+        }}
+        options={{
+          scales: {
+            x: {
+              type: 'realtime',
+	      realtime: {
+	        delay: 2000,
+	        onRefresh: chart => {
+		  chart.data.datasets.forEach(dataset => {
+		    dataset.data.push({
+		      x: Date.now(),
+		      y: Math.random()
+		    }); 
+		  });
+		}
+	      }
+            }
+          }
+        }}
+      />
+    );
+  }
 }
 
 export default App;
